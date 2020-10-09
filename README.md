@@ -13,23 +13,25 @@ Pong Game
 This is a project I decided I wanted to do in order to practice my C++. I chose to make this game because it was one of the very first video games, released in 1972.
 
 ## Setup
-In order to compile the stack machine, open up the terminal navigate to this project and run:
+In order to play this game, clone this repo to a Linux enviroment and navigate to the project. </br>
+Use this command to compile the program:
 	
 	$ ./pong.sh compile
 
-Run: 
+Use this command to run the program: 
 
-	$ ./stack.sh run
+	$ ./pong.sh run
   
-Once you are done run:
+Once you are done, use this command to clean up the folder:
 	
 	$ ./pong.sh clean
 
-This will clean up the folder by removing the main.out file.
+This will remove the main.out file.
 
 ## Features
 Implemented:
 * Ball object created
+* Paddle object created
 
 ## Status
 Project is: _in progess_
