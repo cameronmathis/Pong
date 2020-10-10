@@ -197,14 +197,11 @@ class cGameManager {
         void input() {
             ball -> move();
 
-            int ballX = ball -> getX();
-            int ballY = ball -> getY();
-            int player1X = player1 -> getX();
             int player1Y = player1 -> getY();
-            int player2X = player2 -> getX();
             int player2Y = player2 -> getY();
 
             char current = getch();
+            cout << "char: " << current << endl;
             if (current ==  up1) {
                 if (player1Y > 0) {
                     player1 -> moveUp();
