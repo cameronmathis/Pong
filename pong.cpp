@@ -1,6 +1,7 @@
 #include <iostream>
 #include <time.h>
 #include <curses.h>
+#include <unistd.h>
 using namespace std;
 
 enum eDir{
@@ -49,7 +50,7 @@ class cBall {
                 case STOP:
                     break;
                 case LEFT:
-                    x--;
+                    x -= 2;
                     break;
                 case UPLEFT:
                     x--; y --;
@@ -58,7 +59,7 @@ class cBall {
                     x--; y++;
                     break;
                 case RIGHT:
-                    x++;
+                    x += 2;
                     break;
                 case UPRIGHT:
                     x++; y--;
@@ -200,6 +201,7 @@ class cGameManager {
             int player1Y = player1 -> getY();
             int player2Y = player2 -> getY();
 
+            // char current = 'i';
             char current = getch();
             cout << "char: " << current << endl;
             if (current ==  up1) {
@@ -242,7 +244,7 @@ class cGameManager {
 
             // left paddle
             for (int i = 0; i < 4; i++) {
-                if (ballX == player1X + 1) {
+                if (ballX <= player1X + 1) {
                     if (ballY == player1Y + i) {
                         ball -> changeDirection((eDir)((rand() % 3) + 4));
                     }
@@ -250,7 +252,7 @@ class cGameManager {
             }
             // right paddle
             for (int i = 0; i < 4; i++) {
-                if (ballX == player2X - 1) {
+                if (ballX >= player2X - 1) {
                     if (ballY == player2Y + i) {
                         ball -> changeDirection((eDir)((rand() % 3) + 1));
                     }
@@ -258,19 +260,19 @@ class cGameManager {
             }
 
             // bottom wall
-            if (ballY == height - 1) {
+            if (ballY >= height - 1) {
                 ball -> changeDirection(ball -> getDirection() == DOWNRIGHT ? UPRIGHT : UPLEFT);
             }
             // top wall
-            if (ballY == 0) {
+            if (ballY <= 0) {
                 ball -> changeDirection(ball -> getDirection() == UPRIGHT ? DOWNRIGHT : DOWNLEFT);
             }
             // right wall
-            if (ballX == width - 1) {
+            if (ballX >= width - 1) {
                 scoreUp(player1);
             }
             // left wall
-            if (ballX == 0) {
+            if (ballX <= 0) {
                 scoreUp(player2);
             }
         }
@@ -279,6 +281,7 @@ class cGameManager {
                 draw();
                 input();
                 logic();
+                usleep(75000);
             }
         }
 };

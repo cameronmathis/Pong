@@ -13,7 +13,8 @@ Pong Game
 This is a project I decided I wanted to do in order to practice my C++. I chose to make this game because it was one of the very first video games, released in 1972.
 
 ## Setup
-In order to play this game, clone this repo to a Linux enviroment and navigate to the project. </br>
+In order to play this game, you need g++ installed on a Linux machine. </br>
+Clone this repo to a Linux enviroment and navigate to the project. </br>
 Use this command to compile the program:
 	
 	$ ./pong.sh compile
@@ -30,9 +31,14 @@ This will remove the pong.out file.
 
 ## Features
 Implemented:
-* Ball object created
 * Paddle object created
+* Ball object created
+* Ball moves
 * Visuals created
+* Score displayed
+
+Work-in-progress:
+* Paddles move to key press
 
 ## Status
 Project is: _in progess_
