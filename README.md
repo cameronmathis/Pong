@@ -32,6 +32,7 @@ This will remove the main.out file.
 Implemented:
 * Ball object created
 * Paddle object created
+* Visuals created
 
 ## Status
 Project is: _in progess_
