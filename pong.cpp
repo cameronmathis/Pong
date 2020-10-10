@@ -201,9 +201,7 @@ class cGameManager {
             int player1Y = player1 -> getY();
             int player2Y = player2 -> getY();
 
-            // char current = 'i';
             char current = getch();
-            cout << "char: " << current << endl;
             if (current ==  up1) {
                 if (player1Y > 0) {
                     player1 -> moveUp();
