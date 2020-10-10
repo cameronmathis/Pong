@@ -285,7 +285,7 @@ class cGameManager {
 };
 
 int main() {
-    cGameManager c(80, 20);
+    cGameManager c(87, 20);
     c.run();
     return 0;
 }
