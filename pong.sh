@@ -2,13 +2,13 @@
 
 case $1 in
 	compile)
-		g++ main.cpp -std=c++11 -o main.out
+		g++ pong.cpp -std=c++11 -o pong.out -lncurses
 		;;
 	run)
-		./main.out
+		./pong.out
 		;;
 	clean)
-		rm main.out
+		rm pong.out
 		;;
 	*)
 		echo command invalid or missing

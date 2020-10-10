@@ -26,7 +26,7 @@ Once you are done, use this command to clean up the folder:
 	
 	$ ./pong.sh clean
 
-This will remove the main.out file.
+This will remove the pong.out file.
 
 ## Features
 Implemented:

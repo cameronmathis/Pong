@@ -1,5 +1,6 @@
 #include <iostream>
 #include <time.h>
+#include <curses.h>
 using namespace std;
 
 enum eDir{
@@ -203,7 +204,7 @@ class cGameManager {
             int player2X = player2 -> getX();
             int player2Y = player2 -> getY();
 
-            char current = std::cin.get();
+            char current = getch();
             if (current ==  up1) {
                 if (player1Y > 0) {
                     player1 -> moveUp();
