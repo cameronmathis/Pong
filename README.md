@@ -40,9 +40,9 @@ Implemented:
 * Score displayed
 
 Future-features:
-* Paddles more naturally
-* Both paddles can move at a time
-* Single player mode
+* Moke paddles move more naturally
+* Make both paddles able to move at the same time
+* Implement single player mode
 
 ## Status
 Project is: _finsished_
