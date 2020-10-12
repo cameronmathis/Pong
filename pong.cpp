@@ -1,8 +1,8 @@
 #include <iostream>
 #include <time.h>
-#include <ncurses.h>
-#include <unistd.h>
 #include <termios.h>
+#include <unistd.h>
+#include <fcntl.h>
 using namespace std;
 
 enum eDir{
@@ -202,36 +202,61 @@ class cGameManager {
             int player1Y = player1 -> getY();
             int player2Y = player2 -> getY();
 
-            char current = getchar();
-            if (current ==  up1) {
-                if (player1Y > 0) {
-                    player1 -> moveUp();
+            if (kbhit()) {
+                char current = getchar();
+                if (current ==  up1) {
+                    if (player1Y > 0) {
+                        player1 -> moveUp();
+                    }
                 }
-            }
-            if (current ==  down1) {
-                if (player1Y + 4 < height) {
-                    player1 -> moveDown();
+                if (current ==  down1) {
+                    if (player1Y + 4 < height) {
+                        player1 -> moveDown();
+                    }
                 }
-            }
-            if (current ==  up2) {
-                if (player2Y > 0) {
-                    player2 -> moveUp();
+                if (current ==  up2) {
+                    if (player2Y > 0) {
+                        player2 -> moveUp();
+                    }
                 }
-            }
-            if (current ==  down2) {
-                if (player2Y + 4 < height) {
-                    player2 -> moveDown();
+                if (current ==  down2) {
+                    if (player2Y + 4 < height) {
+                        player2 -> moveDown();
+                    }
                 }
-            }
                 
+                if (ball -> getDirection() == STOP) {
+                    ball -> randomDirection();
+                }
 
-            if (ball -> getDirection() == STOP) {
-                ball -> randomDirection();
+                if (current == 'q') {
+                    quit = true;
+                }
             }
-
-            if (current == 'q') {
-                quit = true;
+        }
+        int kbhit() {
+            struct termios oldt, newt;
+            int ch;
+            int oldf;
+ 
+            tcgetattr(STDIN_FILENO, &oldt);
+            newt = oldt;
+            newt.c_lflag &= ~(ICANON | ECHO);
+            tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+            oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
+            fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
+ 
+            ch = getchar();
+ 
+            tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+            fcntl(STDIN_FILENO, F_SETFL, oldf);
+ 
+            if(ch != EOF) {
+                ungetc(ch, stdin);
+                return 1;
             }
+ 
+            return 0;
         }
         void logic() {
             int ballX = ball -> getX();

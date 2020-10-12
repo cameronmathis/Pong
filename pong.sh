@@ -2,7 +2,7 @@
 
 case $1 in
 	compile)
-		g++ pong.cpp -std=c++11 -o pong.out -lncurses
+		g++ pong.cpp -std=c++11 -o pong.out
 		;;
 	run)
 		./pong.out
