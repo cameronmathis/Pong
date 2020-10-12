@@ -1,7 +1,8 @@
 #include <iostream>
 #include <time.h>
-#include <curses.h>
+#include <ncurses.h>
 #include <unistd.h>
+#include <termios.h>
 using namespace std;
 
 enum eDir{
@@ -160,7 +161,7 @@ class cGameManager {
                     }
 
                     if (ballX == j && ballY == i) {
-                        cout << "O"; // ball
+                        cout << "o"; // ball
                     } else if (player1X == j && player1Y == i) {
                         cout << "|"; // player1
                     } else if (player1X == j && player1Y + 1 == i) {
@@ -201,14 +202,14 @@ class cGameManager {
             int player1Y = player1 -> getY();
             int player2Y = player2 -> getY();
 
-            char current = getch();
+            char current = getchar();
             if (current ==  up1) {
                 if (player1Y > 0) {
                     player1 -> moveUp();
                 }
             }
             if (current ==  down1) {
-                if (player2Y + 4 < height) {
+                if (player1Y + 4 < height) {
                     player1 -> moveDown();
                 }
             }
@@ -219,7 +220,7 @@ class cGameManager {
             }
             if (current ==  down2) {
                 if (player2Y + 4 < height) {
-                    player1 -> moveDown();
+                    player2 -> moveDown();
                 }
             }
                 
@@ -279,13 +280,33 @@ class cGameManager {
                 draw();
                 input();
                 logic();
-                usleep(75000);
+                usleep(50000);
             }
         }
 };
 
 int main() {
+    struct termios old_tio, new_tio;
+
+    // get the terminal settings for stdin
+    tcgetattr(STDIN_FILENO, &old_tio);
+
+    // keep the old setting to restore them a the end
+    new_tio=old_tio;
+
+    // disable canonical mode (buffered i/o) and local echo
+    new_tio.c_lflag &=(~ICANON & ~ECHO);
+
+    // set the new settings immediately
+    tcsetattr(STDIN_FILENO, TCSANOW, &new_tio);
+
+    // run the game
     cGameManager c(87, 20);
     c.run();
+
+    // restore the former settings
+    tcsetattr(STDIN_FILENO, TCSANOW, &old_tio);
+
+    // end program
     return 0;
 }

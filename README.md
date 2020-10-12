@@ -22,6 +22,8 @@ Use this command to compile the program:
 Use this command to run the program: 
 
 	$ ./pong.sh run
+
+To stop the program simply press "q". If this program is ended any other way, then a new terminal window will need to be started to regain control. </br>
   
 Once you are done, use this command to clean up the folder:
 	
