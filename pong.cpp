@@ -1,11 +1,17 @@
 #include <iostream>
 #include <time.h>
 #include <termios.h>
+#include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
+
 using namespace std;
 
-enum eDir{
+void initTermios(termios& oldTio, termios& newTio);
+void resetTermios(termios& oldTio);
+int kbhit();
+
+enum Direction{
     STOP = 0,
     LEFT = 1,
     UPLEFT = 2,
@@ -15,13 +21,13 @@ enum eDir{
     DOWNRIGHT = 6
 };
 
-class cBall {
+class Ball {
     private:
         int x, y;
         int originalX, originalY;
-        eDir direction;
+        Direction direction;
     public:
-        cBall(int posX, int posY) {
+        Ball(int posX, int posY) {
             originalX = posX;
             originalY = posY;
             x = posX; y = posY;
@@ -31,11 +37,11 @@ class cBall {
             x = originalX; y = originalY;
             direction = STOP;
         }
-        void changeDirection(eDir d) {
+        void changeDirection(Direction d) {
             direction = d;
         }
         void randomDirection() {
-            direction = (eDir)((rand() % 6) + 1);
+            direction = (Direction)((rand() % 6) + 1);
         }
         inline int getX() {
             return x;
@@ -43,7 +49,7 @@ class cBall {
         inline int getY() {
             return y;
         }
-        inline eDir getDirection() {
+        inline Direction getDirection() {
             return direction;
         }
         void move() {
@@ -74,15 +80,15 @@ class cBall {
         }
 };
 
-class cPaddle {
+class Paddle {
     private:
         int x, y;
         int originalX, originalY;
     public:
-        cPaddle() {
+        Paddle() {
             x = y = 0;
         }
-        cPaddle(int posX, int posY) : cPaddle() {
+        Paddle(int posX, int posY) : Paddle() {
             originalX = posX;
             originalY = posY;
             x = posX;
@@ -105,31 +111,31 @@ class cPaddle {
         }
 };
 
-class cGameManager {
+class GameManager {
     private:
         int width, height;
         int score1, score2;
         char up1, down1, up2, down2;
         bool quit;
-        cBall *ball;
-        cPaddle *player1;
-        cPaddle *player2;
+        Ball *ball;
+        Paddle *player1;
+        Paddle *player2;
     public:
-        cGameManager(int w, int h) {
+        GameManager(int w, int h) {
             srand(time(NULL));
             quit = false;
             up1 = 'w'; up2 = 'i';
             down1 = 's'; down2 = 'k';
             score1 = score2 = 0;
             width = w; height = h;
-            ball = new cBall(w/2, h/2);
-            player1 = new cPaddle(1, h/2 - 3);
-            player2 = new cPaddle (w - 2, h/2 -3);
+            ball = new Ball(w/2, h/2);
+            player1 = new Paddle(1, h/2 - 3);
+            player2 = new Paddle (w - 2, h/2 -3);
         }
-        ~cGameManager() {
+        ~GameManager() {
             delete ball, player1, player2;
         }
-        void scoreUp(cPaddle *player) {
+        void scoreUp(Paddle *player) {
             if (player == player1) {
                 score1++;
             } else if (player == player2) {
@@ -234,30 +240,6 @@ class cGameManager {
                 }
             }
         }
-        int kbhit() {
-            struct termios oldt, newt;
-            int ch;
-            int oldf;
- 
-            tcgetattr(STDIN_FILENO, &oldt);
-            newt = oldt;
-            newt.c_lflag &= ~(ICANON | ECHO);
-            tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-            oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
-            fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
- 
-            ch = getchar();
- 
-            tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-            fcntl(STDIN_FILENO, F_SETFL, oldf);
- 
-            if(ch != EOF) {
-                ungetc(ch, stdin);
-                return 1;
-            }
- 
-            return 0;
-        }
         void logic() {
             int ballX = ball -> getX();
             int ballY = ball -> getY();
@@ -270,7 +252,7 @@ class cGameManager {
             for (int i = 0; i < 4; i++) {
                 if (ballX <= player1X + 1) {
                     if (ballY == player1Y + i) {
-                        ball -> changeDirection((eDir)((rand() % 3) + 4));
+                        ball -> changeDirection((Direction)((rand() % 3) + 4));
                     }
                 }
             }
@@ -278,7 +260,7 @@ class cGameManager {
             for (int i = 0; i < 4; i++) {
                 if (ballX >= player2X - 1) {
                     if (ballY == player2Y + i) {
-                        ball -> changeDirection((eDir)((rand() % 3) + 1));
+                        ball -> changeDirection((Direction)((rand() % 3) + 1));
                     }
                 }
             }
@@ -307,30 +289,57 @@ class cGameManager {
                 logic();
                 usleep(50000);
             }
+            system("clear");
         }
 };
 
-int main() {
-    struct termios old_tio, new_tio;
-
+/* Initialize new terminal i/o settings */
+void initTermios(termios& oldTio, termios& newTio) {
     // get the terminal settings for stdin
-    tcgetattr(STDIN_FILENO, &old_tio);
+    tcgetattr(STDIN_FILENO, &oldTio);
+    // make new settings same as old settings
+    newTio = oldTio;
+    // disable buffered i/o 
+    newTio.c_lflag &= ~ICANON; 
+    // set no echo mode
+    newTio.c_lflag &= ~ECHO; 
+    // use these new terminal i/o settings
+    tcsetattr(STDIN_FILENO, TCSANOW, &newTio); 
+}
 
-    // keep the old setting to restore them a the end
-    new_tio=old_tio;
+/* Restore old terminal i/o settings */
+void resetTermios(termios& oldTio) {
+  tcsetattr(STDIN_FILENO, TCSANOW, &oldTio);
+}
 
-    // disable canonical mode (buffered i/o) and local echo
-    new_tio.c_lflag &=(~ICANON & ~ECHO);
+/* Returns int indicating if a key is being pressed */
+int kbhit() {
+    int oldFlags = fcntl(STDIN_FILENO, F_GETFL, 0);
+    fcntl(STDIN_FILENO, F_SETFL, oldFlags | O_NONBLOCK);
+ 
+    int ch = getchar();
+ 
+    fcntl(STDIN_FILENO, F_SETFL, oldFlags);
+ 
+    if(ch != EOF) {
+        ungetc(ch, stdin);
+        return 1;
+    }
+ 
+    return 0;
+}
 
-    // set the new settings immediately
-    tcsetattr(STDIN_FILENO, TCSANOW, &new_tio);
+int main() {
+    struct termios oldTio, newTio;
+    // initialize new terminal settings
+    initTermios(oldTio, newTio);
 
     // run the game
-    cGameManager c(87, 20);
+    GameManager c(87, 20);
     c.run();
 
-    // restore the former settings
-    tcsetattr(STDIN_FILENO, TCSANOW, &old_tio);
+    // restore the former terminal settings
+    resetTermios(oldTio);
 
     // end program
     return 0;

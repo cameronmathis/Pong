@@ -39,11 +39,13 @@ Implemented:
 * Visuals created
 * Score displayed
 
-Work-in-progress:
-* Paddles move to key press
+Future-features:
+* Paddles more naturally
+* Both paddles can move at a time
+* Single player mode
 
 ## Status
-Project is: _in progess_
+Project is: _finsished_
 
 ## Language details
 Language used: C++
