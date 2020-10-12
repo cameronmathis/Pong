@@ -34,13 +34,14 @@ This will remove the pong.out file.
 ## Features
 Implemented:
 * Paddle object created
+* Paddles move
 * Ball object created
 * Ball moves
 * Visuals created
 * Score displayed
 
 Future-features:
-* Moke paddles move more naturally
+* Make paddles move more naturally
 * Make both paddles able to move at the same time
 * Implement single player mode
 
