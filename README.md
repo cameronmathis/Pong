@@ -29,7 +29,8 @@ Once you are done, use this command to clean up the folder:
 	
 	$ ./pong.sh clean
 
-This will remove the pong.out file.
+This will remove the pong.out file. </br></br>
+In order to quit the game, simply press q. If the game is quit another way then the terminal will need to be reloaded to regain functionality.
 
 ## Features
 Implemented:
